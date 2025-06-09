@@ -89,6 +89,7 @@
         <h2 class="text-center font-semibold text-lg mb-2">🎉 Ngày lễ hôm nay</h2>
         <h3 id="ten-le" class="text-center text-pink-600 font-bold text-base">...</h3>
         <p id="loi-chuc" class="text-sm mt-2 text-center">...</p>
+        <p id="next-holiday" class="text-xs text-gray-600 mt-1 text-center">...</p>
       </div>
     </div>
 
@@ -205,8 +206,29 @@
         .then(res => res.json())
         .then(data => {
           const le = data.find(item => item.ngay === today && item.loai === 'duong');
-          document.getElementById('ten-le').textContent = le ? le.ten : 'Không có ngày lễ';
-          document.getElementById('loi-chuc').textContent = le?.loiChuc || 'Chúc bạn một ngày tuyệt vời!';
+          if (le) {
+            document.getElementById('ten-le').textContent = le.ten;
+            document.getElementById('loi-chuc').textContent = le.chuc || 'Chúc bạn một ngày tuyệt vời!';
+            document.getElementById('next-holiday').textContent = '';
+          } else {
+            document.getElementById('ten-le').textContent = '👋 Hôm nay không có lễ nào';
+            document.getElementById('loi-chuc').textContent = 'Chúc bạn một ngày vui vẻ và tràn đầy năng lượng!';
+            // Find the next holiday
+            const holidays = data.filter(item => item.loai === 'duong');
+            const now = new Date('2025-06-10'); // Current date
+            let nextHoliday = null;
+            for (let holiday of holidays) {
+              const [hdd, hmm] = holiday.ngay.split('-');
+              let holidayDate = new Date(now.getFullYear(), hmm - 1, hdd);
+              if (holidayDate < now) {
+                holidayDate.setFullYear(holidayDate.getFullYear() + 1);
+              }
+              if (holidayDate >= now && (!nextHoliday || holidayDate < nextHoliday.date)) {
+                nextHoliday = { name: holiday.ten, date: holidayDate, ngay: holiday.ngay };
+              }
+            }
+            document.getElementById('next-holiday').textContent = nextHoliday ? `⏳ Sắp đến: ${nextHoliday.name} (${nextHoliday.ngay.replace('-', '/')}/${nextHoliday.date.getFullYear()})` : '';
+          }
         });
     }
 
