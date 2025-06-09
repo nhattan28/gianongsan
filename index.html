@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ Giao Diện Mới | Nông Sản & Ngày Lễ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: radial-gradient(circle, #fefce8, #fdf6e3);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .card {
+      border-radius: 16px;
+      padding: 16px;
+      overflow: hidden;
+      max-width: 100%;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .positive { color: #16a34a; font-weight: bold; }
+    .negative { color: #dc2626; font-weight: bold; }
+    #confetti-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    table.auto-fit {
+      margin: auto;
+      width: auto;
+      max-width: 100%;
+      border-collapse: collapse;
+    }
+    table.auto-fit td, table.auto-fit th {
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4">
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Navigation -->
+  <div class="flex flex-wrap justify-center gap-2 mb-4">
+    <a href="#" class="bg px-4 py-1 rounded-full text-sm hover:bg-green-100">🎵</a>
+  </div>
+
+  <!-- Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-fit mx-auto">
+  <!-- Cột 1: Ngày & Giờ + Ngày lễ -->
+  <div class="flex flex-col gap-4">
+    <div class="card relative z-10">
+      <h2 class="text-center font-semibold text-lg mb-2">📅 Ngày & Giờ</h2>
+      <p class="text-center text-2xl font-bold" id="clock">--:--:--</p>
+      <table class="auto-fit mt-2 text-sm text-center">
+        <tr class="font-bold bg-gray-100">
+          <th>Thứ</th><th>Dương lịch</th><th>Âm lịch</th>
+        </tr>
+        <tr>
+          <td id="thu">...</td>
+          <td id="ngayDuong">...</td>
+          <td id="ngayAmLich">...</td>
+        </tr>
+      </table>
+      <p class="mt-2 text-xs text-gray-600" id="ngayDacBiet">...</p>
+    </div>
+    <div class="card relative z-10">
+      <h2 class="text-center font-semibold text-lg mb-2">🎉 Ngày lễ hôm nay</h2>
+      <h3 id="ten-le" class="text-center text-pink-600 font-bold text-base">...</h3>
+      <p id="loi-chuc" class="text-sm mt-2 text-center">...</p>
+    </div>
+  </div>
+
+  <!-- Cột 2: Giá Nông Sản -->
+  <div class="flex flex-col gap-4"> 
+  <h2 class="text-center font-semibold text-lg mb-2">🌾 Giá Nông Sản 🌾</h2>
+    <div id="ngayTongHop" class="text-center text-sm font-semibold">Loading...</div>
+    <div id="giaNongSan" class="mt-2 text-sm">...</div>
+  </div>
+
+  <!-- Cột 3: Giá xăng dầu -->
+  <div class="card relative z-10 w-fit max-w-full">
+    <h2 class="text-center font-semibold text-lg mb-2">⛽ Giá xăng dầu</h2>
+<iframe src="xangdau.html" class="w-full" style="border:none; height: auto; min-height: 500px;" scrolling="no"></iframe>
+  </div>
+</div>
+
+    </div>
+
+
+  <!-- Scripts -->
+  <script src="main.js"></script>
+  <script>
+    const canvas = document.getElementById("confetti-canvas");
+    const ctx = canvas.getContext("2d");
+    let W = window.innerWidth, H = window.innerHeight;
+    canvas.width = W; canvas.height = H;
+
+    const particles = Array.from({length: 80}, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 4 + 1,
+      d: Math.random() * 50,
+      color: ["#fde132", "#009bde", "#ff6b00"][Math.floor(Math.random() * 3)],
+      tilt: Math.floor(Math.random() * 5) - 5,
+      tiltAngle: 0,
+      tiltAngleIncremental: Math.random() * 0.07 + 0.05
+    }));
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.lineWidth = p.r;
+        ctx.strokeStyle = p.color;
+        ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+        ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+        ctx.stroke();
+      });
+      updateConfetti();
+    }
+
+    function updateConfetti() {
+      particles.forEach(p => {
+        p.y += Math.cos(p.d) + 1 + p.r / 2;
+        p.x += Math.sin(p.d);
+        p.tiltAngle += p.tiltAngleIncremental;
+        p.tilt = Math.sin(p.tiltAngle) * 15;
+        if (p.y > H) { p.x = Math.random() * W; p.y = -10; }
+      });
+    }
+
+    setInterval(drawConfetti, 30);
+    window.addEventListener("resize", () => {
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W; canvas.height = H;
+    });
+  </script>
+
+  <!-- Tự động cập nhật -->
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById("clock").textContent = `${h}:${m}:${s}`;
+      document.getElementById("thu").textContent = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'][now.getDay()];
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mm = String(now.getMonth()+1).padStart(2, '0');
+      loadNgayLe(`${dd}-${mm}`);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function getLichAmDuong() {
+      fetch('https://script.google.com/macros/s/AKfycbzk1k3wh6KS0B3yDJzZm07HTYgmkP6sGd0HzhAjN5Kh3bGlFJgRRa93aFHzdNCOP1fz/exec')
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('ngayDuong').textContent = data.ngayDuong || '...';
+          document.getElementById('ngayAmLich').textContent = data.ngayAmLich || '...';
+          document.getElementById('ngayDacBiet').textContent = data.ngayDacBiet || '...';
+        });
+    }
+    getLichAmDuong();
+
+    function loadNgayLe(today) {
+      fetch('le.json')
+        .then(res => res.json())
+        .then(data => {
+          const le = data.find(item => item.ngay === today && item.loai === 'duong');
+          document.getElementById('tenNgayLe').textContent = le ? le.ten : 'Không có ngày lễ';
+        });
+    }
+
+    async function loadGia() {
+      try {
+        const res = await fetch('https://script.google.com/macros/s/AKfycbzQ1loBs5fd9I4Pwo1IN-2u26nGSBSefkJFibPxzKVBktoTH9pM2MeCcK0F-0Lfebe_/exec');
+        const data = await res.json();
+        const cp = data.caphe;
+        const tieu = data.tieu;
+        const ngayCapNhat = `☕ Giá cà phê ngày ${cp.ngay} – 🌿 Giá tiêu ngày ${(tieu.tieuDe.match(/\d{2}\/\d{2}\/\d{4}/) || [''])[0]}`;
+        document.getElementById('ngayTongHop').textContent = ngayCapNhat;
+
+        let html = `<table class='w-full text-sm mt-1'><tr class='font-bold bg-gray-100'><th>Sản phẩm</th><th>Khu vực</th><th>Giá</th><th>Thay đổi</th></tr>`;
+        html += `<tr><td>Cà phê</td><td>Đắk Nông</td><td>${cp.gia.toLocaleString('vi-VN')}</td><td><span class="${cp.thaydoi > 0 ? 'positive' : 'negative'}">${cp.thaydoi > 0 ? '+ ' : '- '}${Math.abs(cp.thaydoi).toLocaleString('vi-VN')}</span></td></tr>`;
+        tieu.data.forEach(item => {
+          html += `<tr><td>Tiêu</td><td>${item.khuVuc}</td><td>${item.giaMua.toLocaleString('vi-VN')}</td><td><span class="${item.thayDoi > 0 ? 'positive' : 'negative'}">${item.thayDoi > 0 ? '+ ' : '- '}${Math.abs(item.thayDoi).toLocaleString('vi-VN')}</span></td></tr>`;
+        });
+        html += '</table>';
+        document.getElementById('giaNongSan').innerHTML = html;
+      } catch (e) {
+        document.getElementById('giaNongSan').textContent = 'Lỗi tải giá.';
+      }
+    }
+    loadGia();
+    setInterval(loadGia, 300000);
+  </script>
+</body>
+</html>
