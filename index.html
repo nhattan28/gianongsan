@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>✨ Nông Sản & Ngày Lễ</title>
+  <title>Tin tức</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <link rel="stylesheet" href="styles.css">
@@ -56,15 +56,6 @@
       flex: 1;
       min-width: 0;
     }
-    .special-note {
-      font-size: 12px;
-      color: #dc2626;
-      text-align: center;
-      margin-top: 5px;
-      line-height: 1.2;
-      max-height: 2.4em; /* Approximately 2 lines */
-      overflow: hidden;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
@@ -92,7 +83,7 @@
             <td id="ngayAmLich">...</td>
           </tr>
         </table>
-        <p class="special-note" id="ngayDacBiet">...</p>
+        <p class="mt-2 text-xs text-gray-600" id="ngayDacBiet">...</p>
       </div>
       <div class="card relative z-10">
         <h2 class="text-center font-semibold text-lg mb-2">🎉 Ngày lễ hôm nay</h2>
@@ -196,7 +187,6 @@
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       document.getElementById("ngayDuong").textContent = `${dd}-${mm}-${now.getFullYear()}`;
       loadNgayLe(`${dd}-${mm}`);
-      updateSpecialNote(`${dd}-${mm}`);
     }
     setInterval(updateClock, 1000);
     updateClock();
@@ -206,7 +196,7 @@
         .then(r => r.json())
         .then(data => {
           document.getElementById('ngayAmLich').textContent = data.ngayAmLich || '...';
-          updateSpecialNoteFromLunar(data.ngayAmLich);
+          document.getElementById('ngayDacBiet').textContent = data.ngayDacBiet || '...';
         });
     }
     getLichAmDuong();
@@ -225,7 +215,7 @@
             document.getElementById('loi-chuc').textContent = 'Chúc bạn một ngày vui vẻ và tràn đầy năng lượng!';
             // Find the next holiday
             const holidays = data.filter(item => item.loai === 'duong');
-            const now = new Date('2025-06-10');
+            const now = new Date('2025-06-10'); // Current date
             let nextHoliday = null;
             for (let holiday of holidays) {
               const [hdd, hmm] = holiday.ngay.split('-');
@@ -240,21 +230,6 @@
             document.getElementById('next-holiday').textContent = nextHoliday ? `⏳ Sắp đến: ${nextHoliday.name} (${nextHoliday.ngay.replace('-', '/')}/${nextHoliday.date.getFullYear()})` : '';
           }
         });
-    }
-
-    function updateSpecialNote(today) {
-      const [dd, mm] = today.split('-');
-      const now = new Date('2025-06-10');
-      const solarDate = new Date(now.getFullYear(), mm - 1, dd);
-      // This function will be overridden by updateSpecialNoteFromLunar for accuracy
-    }
-
-    function updateSpecialNoteFromLunar(lunarDate) {
-      if (lunarDate === '15-5-2025') {
-        document.getElementById('ngayDacBiet').textContent = 'Ngày Thiên Hầu: xuất hành dễ cãi cọ,\ntránh tai nạn chảy máu.';
-      } else {
-        document.getElementById('ngayDacBiet').textContent = '';
-      }
     }
 
     async function loadGia() {
