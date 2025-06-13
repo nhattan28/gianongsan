@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tin tức</title>
+  <title>✨Nông Sản & Ngày Lễ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <link rel="stylesheet" href="styles.css">
@@ -18,14 +18,17 @@
       overflow: hidden;
       max-width: 100%;
       width: fit-content;
-      margin: auto;
+      margin-left: auto;
+      margin-right: auto;
     }
     .positive { color: #16a34a; font-weight: bold; }
     .negative { color: #dc2626; font-weight: bold; }
     #confetti-canvas {
-      position: absolute; top: 0; left: 0;
+      position: absolute;
+      top: 0; left: 0;
       width: 100%; height: 100%;
-      z-index: 0; pointer-events: none;
+      z-index: 0;
+      pointer-events: none;
     }
     table.auto-fit {
       margin: auto;
@@ -37,25 +40,6 @@
       padding: 4px 8px;
       white-space: nowrap;
     }
-    .weather-info {
-      margin-top: 10px;
-      font-size: 16px;
-      line-height: 1.5;
-      white-space: pre-line;
-    }
-    .weather-icon {
-      font-size: 40px;
-      text-align: center;
-    }
-    .weather-container {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-    }
-    .weather-section {
-      flex: 1;
-      min-width: 0;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
@@ -63,71 +47,47 @@
 
   <!-- Navigation -->
   <div class="flex flex-wrap justify-center gap-2 mb-4">
-    <a href="amnhac.html" class="bg px-4 py-1 rounded-full text-sm hover:bg-green-100">🎵</a>
+<a href="amnhac.html" class="bg px-4 py-1 rounded-full text-sm hover:bg-green-100">🎵</a>
   </div>
 
   <!-- Grid Layout -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-fit mx-auto">
-    <!-- Cột 1: Ngày & Giờ + Ngày lễ -->
-    <div class="flex flex-col gap-4">
-      <div class="card relative z-10">
-        <h2 class="text-center font-semibold text-lg mb-2">📅 Ngày & Giờ</h2>
-        <p id="clock" class="text-center text-2xl font-bold">--:--:--</p>
-        <table class="auto-fit mt-2 text-sm text-center">
-          <tr class="font-bold bg-gray-100">
-            <th>Thứ</th><th>Dương lịch</th><th>Âm lịch</th>
-          </tr>
-          <tr>
-            <td id="thu">...</td>
-            <td id="ngayDuong">...</td>
-            <td id="ngayAmLich">...</td>
-          </tr>
-        </table>
-        <p class="mt-2 text-xs text-gray-600" id="ngayDacBiet">...</p>
-      </div>
-      <div class="card relative z-10">
-        <h2 class="text-center font-semibold text-lg mb-2">🎉 Ngày lễ hôm nay</h2>
-        <h3 id="ten-le" class="text-center text-pink-600 font-bold text-base">...</h3>
-        <p id="loi-chuc" class="text-sm mt-2 text-center">...</p>
-        <p id="next-holiday" class="text-xs text-gray-600 mt-1 text-center">...</p>
-      </div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-fit mx-auto">
+  <!-- Cột 1: Ngày & Giờ + Ngày lễ -->
+  <div class="flex flex-col gap-4">
+    <div class="card relative z-10">
+      <h2 class="text-center font-semibold text-lg mb-2">📅 Ngày & Giờ</h2>
+      <p class="text-center text-2xl font-bold" id="clock">--:--:--</p>
+      <table class="auto-fit mt-2 text-sm text-center">
+        <tr class="font-bold bg-gray-100">
+          <th>Thứ</th><th>Dương lịch</th><th>Âm lịch</th>
+        </tr>
+        <tr>
+          <td id="thu">...</td>
+          <td id="ngayDuong">...</td>
+          <td id="ngayAmLich">...</td>
+        </tr>
+      </table>
+      <p class="mt-2 text-xs text-gray-600" id="ngayDacBiet">...</p>
     </div>
-
-    <!-- Cột 2: Giá Nông Sản + Thời tiết Đắk Nông + Thời tiết Đà Nẵng -->
-    <div class="flex flex-col gap-4 w-full">
-      <div class="card relative z-10">
-        <h2 class="text-center font-semibold text-lg mb-2">🌾 Giá Nông Sản 🌾</h2>
-        <div id="ngayTongHop" class="text-center text-sm font-semibold">Loading...</div>
-        <div id="giaNongSan" class="mt-2 text-sm">...</div>
-      </div>
-      <div class="card relative z-10">
-        <h2 class="text-center font-semibold text-lg mb-2">🌤 Thời tiết</h2>
-        <div class="weather-container">
-          <div class="weather-section">
-            <h3 class="text-center font-semibold">Đắk Nông</h3>
-            <div class="weather-icon" id="daknong-icon">⏳</div>
-            <div class="weather-info" id="daknong-info">Đang tải dữ liệu...</div>
-          </div>
-          <div class="weather-section">
-            <h3 class="text-center font-semibold">Đà Nẵng</h3>
-            <p id="temp">🌡 Nhiệt độ: ...</p>
-            <p id="desc">☁️ Thời tiết: ...</p>
-            <p id="humidity">💧 Độ ẩm: ...</p>
-            <p id="wind">🌬 Gió: ...</p>
-            <p id="update-time" class="text-xs text-gray-600 mt-2">🕒 Cập nhật...</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cột 3: Giá xăng dầu -->
-    <div class="card relative z-10 w-fit max-w-full">
-      <h2 class="text-center font-semibold text-lg mb-2">⛽ Giá xăng dầu</h2>
-      <iframe src="xangdau.html" class="w-full" style="border:none; height: auto; min-height: 500px;" scrolling="no"></iframe>
+    <div class="card relative z-10">
+      <h2 class="text-center font-semibold text-lg mb-2">🎉 Ngày lễ hôm nay</h2>
+      <h3 id="ten-le" class="text-center text-pink-600 font-bold text-base">...</h3>
+      <p id="loi-chuc" class="text-sm mt-2 text-center">...</p>
     </div>
   </div>
 
+  <!-- Cột 3: Giá xăng dầu -->
+  <div class="card relative z-10 w-fit max-w-full">
+    <h2 class="text-center font-semibold text-lg mb-2">⛽ Giá xăng dầu</h2>
+<iframe src="xangdau.html" class="w-full" style="border:none; height: auto; min-height: 500px;" scrolling="no"></iframe>
+  </div>
+</div>
+
+    </div>
+
+
   <!-- Scripts -->
+  <script src="main.js"></script>
   <script>
     const canvas = document.getElementById("confetti-canvas");
     const ctx = canvas.getContext("2d");
@@ -175,6 +135,7 @@
     });
   </script>
 
+  <!-- Tự động cập nhật -->
   <script>
     function updateClock() {
       const now = new Date();
@@ -184,8 +145,7 @@
       document.getElementById("clock").textContent = `${h}:${m}:${s}`;
       document.getElementById("thu").textContent = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'][now.getDay()];
       const dd = String(now.getDate()).padStart(2, '0');
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      document.getElementById("ngayDuong").textContent = `${dd}-${mm}-${now.getFullYear()}`;
+      const mm = String(now.getMonth()+1).padStart(2, '0');
       loadNgayLe(`${dd}-${mm}`);
     }
     setInterval(updateClock, 1000);
@@ -195,6 +155,7 @@
       fetch('https://script.google.com/macros/s/AKfycbzk1k3wh6KS0B3yDJzZm07HTYgmkP6sGd0HzhAjN5Kh3bGlFJgRRa93aFHzdNCOP1fz/exec')
         .then(r => r.json())
         .then(data => {
+          document.getElementById('ngayDuong').textContent = data.ngayDuong || '...';
           document.getElementById('ngayAmLich').textContent = data.ngayAmLich || '...';
           document.getElementById('ngayDacBiet').textContent = data.ngayDacBiet || '...';
         });
@@ -206,122 +167,9 @@
         .then(res => res.json())
         .then(data => {
           const le = data.find(item => item.ngay === today && item.loai === 'duong');
-          if (le) {
-            document.getElementById('ten-le').textContent = le.ten;
-            document.getElementById('loi-chuc').textContent = le.chuc || 'Chúc bạn một ngày tuyệt vời!';
-            document.getElementById('next-holiday').textContent = '';
-          } else {
-            document.getElementById('ten-le').textContent = '👋 Hôm nay không có lễ nào';
-            document.getElementById('loi-chuc').textContent = 'Chúc bạn một ngày vui vẻ và tràn đầy năng lượng!';
-            // Find the next holiday
-            const holidays = data.filter(item => item.loai === 'duong');
-            const now = new Date('2025-06-10'); // Current date
-            let nextHoliday = null;
-            for (let holiday of holidays) {
-              const [hdd, hmm] = holiday.ngay.split('-');
-              let holidayDate = new Date(now.getFullYear(), hmm - 1, hdd);
-              if (holidayDate < now) {
-                holidayDate.setFullYear(holidayDate.getFullYear() + 1);
-              }
-              if (holidayDate >= now && (!nextHoliday || holidayDate < nextHoliday.date)) {
-                nextHoliday = { name: holiday.ten, date: holidayDate, ngay: holiday.ngay };
-              }
-            }
-            document.getElementById('next-holiday').textContent = nextHoliday ? `⏳ Sắp đến: ${nextHoliday.name} (${nextHoliday.ngay.replace('-', '/')}/${nextHoliday.date.getFullYear()})` : '';
-          }
+          document.getElementById('tenNgayLe').textContent = le ? le.ten : 'Không có ngày lễ';
         });
     }
-
-    async function loadGia() {
-      try {
-        const res = await fetch('https://script.google.com/macros/s/AKfycbzQ1loBs5fd9I4Pwo1IN-2u26nGSBSefkJFibPxzKVBktoTH9pM2MeCcK0F-0Lfebe_/exec');
-        const data = await res.json();
-        const cp = data.caphe;
-        const tieu = data.tieu;
-        const ngayCapNhat = `☕ Giá cà phê ngày ${cp.ngay} – 🌿 Giá tiêu ngày ${(tieu.tieuDe.match(/\d{2}\/\d{2}\/\d{4}/) || [''])[0]}`;
-        document.getElementById('ngayTongHop').textContent = ngayCapNhat;
-
-        let html = `<table class='w-full text-sm mt-1'><tr class='font-bold bg-gray-100'><th>Sản phẩm</th><th>Khu vực</th><th>Giá</th><th>Thay đổi</th></tr>`;
-        html += `<tr><td>Cà phê</td><td>Đắk Nông</td><td>${cp.gia.toLocaleString('vi-VN')} VNĐ</td><td><span class="${cp.thaydoi > 0 ? 'positive' : 'negative'}">${cp.thaydoi > 0 ? '+ ' : '- '}${Math.abs(cp.thaydoi).toLocaleString('vi-VN')} VNĐ</span></td></tr>`;
-        tieu.data.forEach(item => {
-          html += `<tr><td>Tiêu</td><td>${item.khuVuc}</td><td>${item.giaMua.toLocaleString('vi-VN')} VNĐ</td><td><span class="${item.thayDoi > 0 ? 'positive' : 'negative'}">${item.thayDoi > 0 ? '+ ' : '- '}${Math.abs(item.thayDoi).toLocaleString('vi-VN')} VNĐ</span></td></tr>`;
-        });
-        html += '</table>';
-        document.getElementById('giaNongSan').innerHTML = html;
-      } catch (e) {
-        document.getElementById('ngayTongHop').textContent = 'Lỗi tải giá.';
-        document.getElementById('giaNongSan').textContent = 'Không thể tải dữ liệu giá nông sản. Vui lòng thử lại sau.';
-      }
-    }
-    loadGia();
-    setInterval(loadGia, 300000);
-
-    // Weather for Dak Nong
-    const apiKeyDakNong = 'YGIAXvr12NqNVTURo3E9Cm8gxGfedisO';
-    const cityIdDakNong = '354292';
-
-    function getWeatherIcon(text) {
-      const t = text.toLowerCase();
-      if (t.includes('mưa')) return '🌧';
-      if (t.includes('dông') || t.includes('sấm sét')) return '⛈';
-      if (t.includes('nắng') || t.includes('mặt trời')) return '☀️';
-      if (t.includes('mây') || t.includes('âm u')) return '☁️';
-      if (t.includes('tuyết')) return '❄️';
-      if (t.includes('sương mù')) return '🌫';
-      if (t.includes('gió')) return '💨';
-      return '🌤';
-    }
-
-    async function fetchWeatherDakNong() {
-      const url = `https://dataservice.accuweather.com/currentconditions/v1/${cityIdDakNong}?apikey=${apiKeyDakNong}&language=vi-vn`;
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Không lấy được dữ liệu thời tiết');
-        const data = await res.json();
-        if (!data || data.length === 0) throw new Error('Dữ liệu rỗng');
-
-        const weather = data[0];
-        const weatherText = weather.WeatherText || 'Không có dữ liệu';
-        const icon = getWeatherIcon(weatherText);
-
-        let message = `${icon} ${weatherText}\n`;
-        if (weather.Temperature?.Metric?.Value !== undefined)
-          message += `🌡 Nhiệt độ: ${Math.round(weather.Temperature.Metric.Value)}°C\n`;
-        if (weather.RealFeelTemperature?.Metric?.Value !== undefined)
-          message += `🔥 Cảm giác: ${Math.round(weather.RealFeelTemperature.Metric.Value)}°C\n`;
-        if (weather.Wind?.Speed?.Metric?.Value !== undefined)
-          message += `💨 Gió: ${weather.Wind.Direction?.Localized || 'Không rõ'} ${weather.Wind.Speed.Metric.Value} km/h\n`;
-        if (weather.RelativeHumidity !== undefined)
-          message += `💧 Độ ẩm: ${weather.RelativeHumidity}%\n`;
-
-        document.getElementById('daknong-icon').textContent = icon;
-        document.getElementById('daknong-info').textContent = message;
-      } catch (error) {
-        document.getElementById('daknong-icon').textContent = '🚫';
-        document.getElementById('daknong-info').textContent = error.message;
-      }
-    }
-
-    fetchWeatherDakNong();
-    setInterval(fetchWeatherDakNong, 600000);
-
-    // Weather for Da Nang
-    async function loadWeatherDaNang() {
-      try {
-        const apiKey = '3096df9a74a4a595cdf8f898c3a19f40';
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Da%20Nang&appid=${apiKey}&units=metric&lang=vi`);
-        const data = await res.json();
-        document.getElementById("temp").textContent = `🌡 Nhiệt độ: ${data.main.temp.toFixed(1)}°C`;
-        document.getElementById("desc").textContent = `☁️ Thời tiết: ${data.weather[0].description}`;
-        document.getElementById("humidity").textContent = `💧 Độ ẩm: ${data.main.humidity}%`;
-        document.getElementById("wind").textContent = `🌬 Gió: ${data.wind.speed} m/s`;
-        document.getElementById("update-time").textContent = `🕒 Cập nhật: ${new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}`;
-      } catch (e) {
-        document.getElementById("temp").textContent = "Không lấy được dữ liệu.";
-      }
-    }
-    loadWeatherDaNang();
-    setInterval(loadWeatherDaNang, 600000);
   </script>
 </body>
 </html>
